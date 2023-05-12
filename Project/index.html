@@ -1,0 +1,75 @@
+<div id="image-track" data-mouse-down-at="0" data-prev-percentage="0">
+    <img class="image" src="https://images.unsplash.com/photo-1680790960435-e5b9670138b2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHx0b3BpYy1mZWVkfDZ8Qm4tRGpyY0Jyd298fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60"/>
+    <img class="image" src="https://images.unsplash.com/photo-1681491313239-9d0033095fde?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHx0b3BpYy1mZWVkfDE5fEJuLURqcmNCcndvfHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60" draggable="false"/>
+    <img class="image" src="https://images.unsplash.com/photo-1681394344979-afa9b18064be?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHx0b3BpYy1mZWVkfDE3fEJuLURqcmNCcndvfHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60" draggable="false"/>
+    <img class="image" src="https://images.unsplash.com/photo-1681394344924-e225bb6f800e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHx0b3BpYy1mZWVkfDE4fEJuLURqcmNCcndvfHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60" draggable="false"/>
+    <img class="image" src="https://images.unsplash.com/photo-1679150903021-6571b98b4afe?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHx0b3BpYy1mZWVkfDI5fEJuLURqcmNCcndvfHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60" draggable="false"/>
+    <img class="image" src="https://images.unsplash.com/photo-1675954758416-4aabbb2ebf51?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHx0b3BpYy1mZWVkfDM0fEJuLURqcmNCcndvfHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60" draggable="false"/>
+    <img class="image" src="https://images.unsplash.com/photo-1674607673371-f7025f95a77b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHx0b3BpYy1mZWVkfDQyfEJuLURqcmNCcndvfHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60" draggable="false"/>
+    <img class="image" src="https://images.unsplash.com/photo-1675079526143-2c4d1e62e655?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHx0b3BpYy1mZWVkfDQ5fEJuLURqcmNCcndvfHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60" draggable="false"/>
+</div>
+
+<style>
+    body {
+        height: 100vh ;
+        width: 100vw;
+        background-color: black;
+        margin: 0rem;
+        overflow: hidden;
+}
+
+    #image-track > .image {
+    width: 40vmin;
+    height: 56vmin;
+    object-fit: cover;
+    object-position: 100% 50%;
+}
+
+#image-track { 
+    display: flex;
+    gap: 4vmin;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-100%, -50%);
+}
+</style>
+
+<script>
+    const track = document.getElementById("image-track");
+
+window.onmousedown = e => { 
+    track.dataset.mouseDownAt = e.clientX;
+}
+
+window.onmouseup = () => {
+    track.dataset.mouseDownAt = "0";
+    track.dataset.prevPercentage = track.dataset.percentage;
+}
+
+window.onmousemove = e => {
+    if (track.dataset.mouseDownAt === "0") return;
+
+    const mouseDelta = parseFloat(track.dataset.mouseDownAt) - e.clientX;
+    const maxDelta = window.innerWidth / 2;
+
+    const percentage = (mouseDelta / maxDelta) * -100;
+    track.style.transform = `translateX(-${percentage}%)`;
+    let nextPercentage = parseFloat(track.dataset.prevPercentage) + percentage;
+    nextPercentage = Math.min(nextPercentage, 0);
+    nextPercentage = Math.max(nextPercentage, -100);
+
+    track.dataset.percentage = nextPercentage;
+
+    track.animate({
+        transform: `translate(${nextPercentage}%, -50%`
+    }, { duration: 1200, fill: "forwards" });
+}
+
+for (const image of track.getElementsByClassName("image")) {
+    image.animate({ 
+        objectPosition: `${nextPercentage + 100}% center`
+    }, { duration: 1200, fill: "forwards" });
+}
+
+</script>
